@@ -1,20 +1,55 @@
 # Offline Sync Simulator 
 
-Simulates how a field tool queues submissions while offline and syncs them safely once connectivity returns. Core logic is plain Python with no framework dependency; FastAPI wraps it as an API for a real dashboard to call.
+Simulates how a field tool queues submissions while offline and syncs them safely once connectivity returns. Core sync logic is framework independent Python; FastAPI exposes it through a simple API that a dashboard or field client can call.
 
 ## Setup
 
+Create and activate a virtual environment.
+
+**Windows PowerShell:**
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+**macOS/Linux:**
+
 ```bash
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
 ## Run
 
+Run the console demo:
+
 ```bash
-python demo.py                        # console demo, no server needed
-pytest                                 # test suite (11 tests)
-uvicorn app.main:app --reload          # API + interactive docs at /docs
+python demo.py
+```
+
+Run the test suite:
+
+```bash
+pytest
+```
+
+Start the API:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+Interactive API documentation is available at:
+
+```text
+http://localhost:8000/docs
 ```
 
 Expected `demo.py` result: 4 queued -> **3 committed**, 1 duplicate dropped (Mukono Municipality), 0 pending.
@@ -53,6 +88,25 @@ curl localhost:8000/records
 - Client-generated UUIDs are the idempotency key. The same pattern works with a unique constraint on `submission_uuid` in a real database (Postgres, SQLite).
 - First-write-wins is the simplest conflict policy. A production system might compare `field_officer_timestamp`, or surface conflicts to a reviewer instead of silently dropping them.
 - Not included (out of scope for a 2-3h exercise): auth, retry/backoff, a persistent DB instead of JSON files, a UI. `sync()` is storage-agnostic — swap `OfflineQueue`/`RecordStore` for SQLAlchemy models and nothing else changes.
+
+## Test Coverage
+
+The test suite covers the main synchronization scenarios, including:
+
+- Queueing submissions
+- Offline behavior
+- Record validation
+- Duplicate detection
+- Idempotent re-submission
+- Same-UUID content conflicts
+- Commit failure handling
+- API behavior
+
+Run the tests with:
+
+```bash
+pytest
+```
 
 ## Layout
 
