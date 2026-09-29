@@ -12,10 +12,11 @@ PAYLOAD = json.loads(
 
 
 def test_full_flow_via_api():
-    # Reset shared state so this test is order-independent.
-    queue.ack(queue.size)
-    for _ in store.records:
-        pass  # RecordStore has no clear(); a fresh .state/ is used per test run instead.
+    # Reset shared state so this test is order-independent, and isn't
+    # affected by an earlier `python demo.py` run leaving records in
+    # the same .state/ folder.
+    queue.clear()
+    store.clear()
 
     resp = client.post("/submissions", json=PAYLOAD)
     assert resp.status_code == 200

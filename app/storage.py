@@ -62,6 +62,11 @@ class OfflineQueue:
         del self._items[:n]
         self._io.write(self._items)
 
+    def clear(self) -> None:
+        """Empty the queue (and its persisted file, if any). Mainly for tests."""
+        self._items = []
+        self._io.write(self._items)
+
 
 class RecordStore:
     """The "server": committed records keyed by submission_uuid, plus a reject log."""
@@ -87,4 +92,9 @@ class RecordStore:
             "records": [*self._state["records"], *records],
             "rejected": [*self._state["rejected"], *(rejected or [])],
         }
+        self._io.write(self._state)
+
+    def clear(self) -> None:
+        """Empty the store (and its persisted file, if any). Mainly for tests."""
+        self._state = {"records": [], "rejected": []}
         self._io.write(self._state)

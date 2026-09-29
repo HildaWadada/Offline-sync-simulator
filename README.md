@@ -5,7 +5,7 @@ Simulates how a field tool queues submissions while offline and syncs them safel
 ## Setup
 
 ```bash
-python -m venv .venv && source .venv/bin/activate   # optional
+python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
