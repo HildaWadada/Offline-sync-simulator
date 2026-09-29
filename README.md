@@ -1,4 +1,4 @@
-# Offline-First Sync Simulator (FastAPI)
+# Offline Sync Simulator 
 
 Simulates how a field tool queues submissions while offline and syncs them safely once connectivity returns. Core logic is plain Python with no framework dependency; FastAPI wraps it as an API for a real dashboard to call.
 
